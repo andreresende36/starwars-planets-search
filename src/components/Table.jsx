@@ -52,7 +52,7 @@ function Table() {
   );
 
   return (
-    <div>
+    <div className="table">
       { loading
         ? (<span>Carregando...</span>)
         : planetsTable }

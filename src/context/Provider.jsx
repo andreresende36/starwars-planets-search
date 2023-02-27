@@ -6,6 +6,7 @@ import getPlanets from '../services/apiServices';
 function Provider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [keys, setKeys] = useState([]);
+  const [filteredPlanets, setFilteredPlanets] = useState('');
 
   useEffect(() => {
     getPlanets().then((data) => data.map((planet) => {
@@ -17,8 +18,17 @@ function Provider({ children }) {
     });
   }, []);
 
+  const filterPlanets = (search) => {
+    const newPlanetsArray = planets.filter(
+      (planet) => planet.name.toUpperCase().includes(search.toUpperCase()),
+    );
+    setFilteredPlanets(newPlanetsArray);
+  };
+
   return (
-    <PlanetsContext.Provider value={ { planets, keys } }>
+    <PlanetsContext.Provider
+      value={ { planets: filteredPlanets || planets, keys, filterPlanets } }
+    >
       { children }
     </PlanetsContext.Provider>
   );
