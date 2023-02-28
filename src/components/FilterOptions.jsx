@@ -10,7 +10,10 @@ function FilterOptions() {
     'orbital_period',
     'rotation_period'];
   const [columnsFilterArray, setColumnsFilterArray] = useState(initialArray);
-  const { filterPlanetsByName, filterPlanetsByStats } = useContext(PlanetsContext);
+  const {
+    filterPlanetsByName,
+    filterByNumericValues,
+    setFilterByNumericValues } = useContext(PlanetsContext);
   const column = useFilterHook('population');
   const comparison = useFilterHook('maior que');
   const quantity = useFilterHook(0);
@@ -38,10 +41,12 @@ function FilterOptions() {
     const newColumnsFilterArray = columnsFilterArray.filter(
       (item) => item !== column.filter,
     );
-    const nrFilters = initialArray.length - newColumnsFilterArray.length;
     setColumnsFilterArray(newColumnsFilterArray);
     column.setFilter(newColumnsFilterArray[0]);
-    filterPlanetsByStats(column.filter, comparison.filter, quantity.filter, nrFilters);
+    setFilterByNumericValues([...filterByNumericValues,
+      { column: column.filter,
+        comparison: comparison.filter,
+        value: quantity.filter }]);
   };
 
   return (

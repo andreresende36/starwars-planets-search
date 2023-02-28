@@ -7,6 +7,7 @@ function Provider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [keys, setKeys] = useState([]);
   const [filteredPlanets, setFilteredPlanets] = useState('');
+  const [filterByNumericValues, setFilterByNumericValues] = useState([]);
 
   useEffect(() => {
     getPlanets().then((data) => data.map((planet) => {
@@ -27,7 +28,7 @@ function Provider({ children }) {
 
   const filterPlanetsByStats = (column, comparison, value, nrFilters) => {
     let arrayToBeFiltered = [];
-    if (nrFilters === 1) {
+    if (nrFilters === 0) {
       arrayToBeFiltered = planets;
     } else {
       arrayToBeFiltered = filteredPlanets;
@@ -47,13 +48,25 @@ function Provider({ children }) {
     setFilteredPlanets(newPlanetsArray);
   };
 
+  useEffect(() => {
+    filterByNumericValues.forEach(
+      (filter, index) => filterPlanetsByStats(
+        filter.column,
+        filter.comparison,
+        filter.value,
+        index,
+      ),
+    );
+  }, [filterByNumericValues]);
+
   return (
     <PlanetsContext.Provider
       value={ {
         planets: filteredPlanets || planets,
         keys,
         filterPlanetsByName,
-        filterPlanetsByStats,
+        filterByNumericValues,
+        setFilterByNumericValues,
       } }
     >
       { children }
