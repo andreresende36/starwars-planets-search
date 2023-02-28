@@ -25,8 +25,14 @@ function Provider({ children }) {
     setFilteredPlanets(newPlanetsArray);
   };
 
-  const filterPlanetsByStats = (column, comparison, value) => {
-    const newPlanetsArray = planets.filter((planet) => {
+  const filterPlanetsByStats = (column, comparison, value, nrFilters) => {
+    let arrayToBeFiltered = [];
+    if (nrFilters === 1) {
+      arrayToBeFiltered = planets;
+    } else {
+      arrayToBeFiltered = filteredPlanets;
+    }
+    const newPlanetsArray = arrayToBeFiltered.filter((planet) => {
       switch (comparison) {
       case 'maior que':
         return Number(planet[column]) > Number(value);

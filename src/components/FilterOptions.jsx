@@ -1,8 +1,15 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 import useFilterHook from '../hooks/useFilterHook';
 
 function FilterOptions() {
+  const initialArray = [
+    'population',
+    'diameter',
+    'surface_water',
+    'orbital_period',
+    'rotation_period'];
+  const [columnsFilterArray, setColumnsFilterArray] = useState(initialArray);
   const { filterPlanetsByName, filterPlanetsByStats } = useContext(PlanetsContext);
   const column = useFilterHook('population');
   const comparison = useFilterHook('maior que');
@@ -28,7 +35,13 @@ function FilterOptions() {
   };
 
   const handleClick = () => {
-    filterPlanetsByStats(column.filter, comparison.filter, quantity.filter);
+    const newColumnsFilterArray = columnsFilterArray.filter(
+      (item) => item !== column.filter,
+    );
+    const nrFilters = initialArray.length - newColumnsFilterArray.length;
+    setColumnsFilterArray(newColumnsFilterArray);
+    column.setFilter(newColumnsFilterArray[0]);
+    filterPlanetsByStats(column.filter, comparison.filter, quantity.filter, nrFilters);
   };
 
   return (
@@ -56,11 +69,9 @@ function FilterOptions() {
             data-testid="column-filter"
             onChange={ handleChange }
           >
-            <option value="population">population</option>
-            <option value="diameter">diameter</option>
-            <option value="surface_water">surface_water</option>
-            <option value="orbital_period">orbital_period</option>
-            <option value="rotation_period">rotation_period</option>
+            {columnsFilterArray.map((item) => (
+              <option value={ item } key={ item }>{item}</option>
+            ))}
           </select>
         </label>
         <label htmlFor="comparison-filter">
