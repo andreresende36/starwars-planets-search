@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 import useFilterHook from '../hooks/useFilterHook';
 
@@ -37,21 +37,34 @@ function FilterOptions() {
     }
   };
 
+  useEffect(() => {
+    filterByNumericValues.forEach((filter) => {
+      const newArray = columnsFilterArray.filter((item) => item !== filter.column);
+      setColumnsFilterArray(newArray);
+      column.setFilter(newArray[0]);
+    });
+  }, [filterByNumericValues]);
+
   const handleClick = () => {
-    const newColumnsFilterArray = columnsFilterArray.filter(
-      (item) => item !== column.filter,
-    );
-    setColumnsFilterArray(newColumnsFilterArray);
-    column.setFilter(newColumnsFilterArray[0]);
     setFilterByNumericValues([...filterByNumericValues,
       { column: column.filter,
         comparison: comparison.filter,
         value: quantity.filter }]);
   };
 
+  const handleDeleteButton = ({ target: { value } }) => {
+    const newFilters = filterByNumericValues.filter((filter) => filter.column !== value);
+    setFilterByNumericValues(newFilters);
+    setColumnsFilterArray(initialArray);
+  };
+
+  const handleClearFilters = () => {
+    setFilterByNumericValues([]);
+  };
+
   return (
     <div className="filter-options">
-      <div>
+      <div className="filter-options-first-row">
         <label htmlFor="search">
           Projeto Star Wars - Trybe
           <br />
@@ -65,7 +78,7 @@ function FilterOptions() {
           />
         </label>
       </div>
-      <div>
+      <div className="filter-options-second-row">
         <label htmlFor="column-filter">
           Coluna
           <select
@@ -106,6 +119,68 @@ function FilterOptions() {
         >
           FILTRAR
         </button>
+        <label htmlFor="column-sort">
+          Ordenar
+          <select
+            id="column-sort"
+            name="column-sort"
+            onChange={ handleChange }
+          >
+            {initialArray.map((item) => (
+              <option value={ item } key={ item }>{item}</option>
+            ))}
+          </select>
+        </label>
+        <div>
+          <label htmlFor="ASC">
+            <input
+              type="radio"
+              name="ASC"
+              id="ASC"
+              value="ASC"
+              onChange={ handleChange }
+            />
+            Ascendente
+          </label>
+          <label htmlFor="DESC">
+            <input
+              type="radio"
+              name="DESC"
+              id="DESC"
+              value="DESC"
+              onChange={ handleChange }
+            />
+            Descendente
+          </label>
+        </div>
+        <button
+          type="button"
+          data-testid="column-sort-button"
+          onClick={ handleClick }
+        >
+          ORDENAR
+        </button>
+        <button
+          type="button"
+          onClick={ handleClearFilters }
+          data-testid="button-remove-filters"
+        >
+          REMOVER FILTROS
+        </button>
+      </div>
+      <div className="filter-options-third-row">
+        {filterByNumericValues.map((filter) => (
+          <p className="filter" data-testid="filter" key={ filter.column }>
+            {`${filter.column} ${filter.comparison} ${filter.value}`}
+            <button
+              className="delete-filter-button"
+              onClick={ handleDeleteButton }
+              value={ filter.column }
+            >
+              X
+            </button>
+          </p>
+        ))}
       </div>
     </div>
   );

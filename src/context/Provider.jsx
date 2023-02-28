@@ -9,16 +9,6 @@ function Provider({ children }) {
   const [filteredPlanets, setFilteredPlanets] = useState('');
   const [filterByNumericValues, setFilterByNumericValues] = useState([]);
 
-  useEffect(() => {
-    getPlanets().then((data) => data.map((planet) => {
-      delete planet.residents;
-      return planet;
-    })).then((filteredData) => {
-      setPlanets(filteredData);
-      setKeys(Object.keys(filteredData[0]));
-    });
-  }, []);
-
   const filterPlanetsByName = (search) => {
     const newPlanetsArray = planets.filter(
       (planet) => planet.name.toUpperCase().includes(search.toUpperCase()),
@@ -49,14 +39,25 @@ function Provider({ children }) {
   };
 
   useEffect(() => {
-    filterByNumericValues.forEach(
-      (filter, index) => filterPlanetsByStats(
-        filter.column,
-        filter.comparison,
-        filter.value,
-        index,
-      ),
-    );
+    getPlanets().then((data) => data.map((planet) => {
+      delete planet.residents;
+      return planet;
+    })).then((filteredData) => {
+      setPlanets(filteredData);
+      setKeys(Object.keys(filteredData[0]));
+    });
+    if (filterByNumericValues.length === 0) {
+      setFilteredPlanets('');
+    } else {
+      filterByNumericValues.forEach(
+        (filter, index) => filterPlanetsByStats(
+          filter.column,
+          filter.comparison,
+          filter.value,
+          index,
+        ),
+      );
+    }
   }, [filterByNumericValues]);
 
   return (
