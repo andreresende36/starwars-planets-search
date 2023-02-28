@@ -23,31 +23,35 @@ function Table() {
 
   const planetsTable = (
     <table>
-      <tr>
-        { loading
-          ? null
-          : keys.map((key, index) => (<th key={ index }>{ handleKeys(key) }</th>)) }
-      </tr>
-      {
-        planets.map((planet) => (
-          <Planet
-            key={ planet.name }
-            name={ planet.name }
-            rotationPeriod={ planet.rotation_period }
-            orbitalPeriod={ planet.orbital_period }
-            diameter={ planet.diameter }
-            climate={ planet.climate }
-            gravity={ planet.gravity }
-            terrain={ planet.terrain }
-            surfaceWater={ planet.surface_water }
-            population={ planet.population }
-            films={ planet.films }
-            created={ planet.created }
-            edited={ planet.edited }
-            url={ planet.url }
-          />
-        ))
-      }
+      <thead>
+        <tr>
+          { loading
+            ? null
+            : keys.map((key, index) => (<th key={ index }>{ handleKeys(key) }</th>)) }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          planets.map((planet) => (
+            <Planet
+              key={ planet.name }
+              name={ planet.name }
+              rotationPeriod={ planet.rotation_period }
+              orbitalPeriod={ planet.orbital_period }
+              diameter={ planet.diameter }
+              climate={ planet.climate }
+              gravity={ planet.gravity }
+              terrain={ planet.terrain }
+              surfaceWater={ planet.surface_water }
+              population={ planet.population }
+              films={ planet.films }
+              created={ planet.created }
+              edited={ planet.edited }
+              url={ planet.url }
+            />
+          ))
+        }
+      </tbody>
     </table>
   );
 

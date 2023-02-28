@@ -18,16 +18,37 @@ function Provider({ children }) {
     });
   }, []);
 
-  const filterPlanets = (search) => {
+  const filterPlanetsByName = (search) => {
     const newPlanetsArray = planets.filter(
       (planet) => planet.name.toUpperCase().includes(search.toUpperCase()),
     );
     setFilteredPlanets(newPlanetsArray);
   };
 
+  const filterPlanetsByStats = (column, comparison, value) => {
+    const newPlanetsArray = planets.filter((planet) => {
+      switch (comparison) {
+      case 'maior que':
+        return Number(planet[column]) > Number(value);
+      case 'menor que':
+        return Number(planet[column]) < Number(value);
+      case 'igual a':
+        return Number(planet[column]) === Number(value);
+      default:
+        return null;
+      }
+    });
+    setFilteredPlanets(newPlanetsArray);
+  };
+
   return (
     <PlanetsContext.Provider
-      value={ { planets: filteredPlanets || planets, keys, filterPlanets } }
+      value={ {
+        planets: filteredPlanets || planets,
+        keys,
+        filterPlanetsByName,
+        filterPlanetsByStats,
+      } }
     >
       { children }
     </PlanetsContext.Provider>
