@@ -58,7 +58,7 @@ function Table() {
   return (
     <div className="table">
       { loading
-        ? (<span>Carregando...</span>)
+        ? (<span data-testid="loading">Carregando...</span>)
         : planetsTable }
     </div>
   );

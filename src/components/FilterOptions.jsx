@@ -69,6 +69,7 @@ function FilterOptions() {
 
   const handleClearFilters = () => {
     setFilterByNumericValues([]);
+    setColumnsFilterArray(initialArray);
   };
 
   return (
