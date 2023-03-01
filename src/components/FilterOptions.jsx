@@ -13,7 +13,10 @@ function FilterOptions() {
   const {
     filterPlanetsByName,
     filterByNumericValues,
-    setFilterByNumericValues } = useContext(PlanetsContext);
+    setFilterByNumericValues,
+    order,
+    setOrder,
+    sortPlanets } = useContext(PlanetsContext);
   const column = useFilterHook('population');
   const comparison = useFilterHook('maior que');
   const quantity = useFilterHook(0);
@@ -31,6 +34,12 @@ function FilterOptions() {
       break;
     case 'value-filter':
       quantity.setFilter(value);
+      break;
+    case 'column-sort':
+      setOrder({ column: value, sort: order.sort });
+      break;
+    case 'sort':
+      setOrder({ column: order.column, sort: value });
       break;
     default:
       return null;
@@ -124,7 +133,9 @@ function FilterOptions() {
           <select
             id="column-sort"
             name="column-sort"
+            value={ order.column }
             onChange={ handleChange }
+            data-testid="column-sort"
           >
             {initialArray.map((item) => (
               <option value={ item } key={ item }>{item}</option>
@@ -135,20 +146,24 @@ function FilterOptions() {
           <label htmlFor="ASC">
             <input
               type="radio"
-              name="ASC"
+              name="sort"
               id="ASC"
               value="ASC"
               onChange={ handleChange }
+              data-testid="column-sort-input-asc"
+              checked={ order.sort === 'ASC' }
             />
             Ascendente
           </label>
           <label htmlFor="DESC">
             <input
               type="radio"
-              name="DESC"
+              name="sort"
               id="DESC"
               value="DESC"
               onChange={ handleChange }
+              data-testid="column-sort-input-desc"
+              checked={ order.sort === 'DESC' }
             />
             Descendente
           </label>
@@ -156,7 +171,7 @@ function FilterOptions() {
         <button
           type="button"
           data-testid="column-sort-button"
-          onClick={ handleClick }
+          onClick={ () => sortPlanets() }
         >
           ORDENAR
         </button>

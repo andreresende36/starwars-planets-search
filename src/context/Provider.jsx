@@ -8,6 +8,7 @@ function Provider({ children }) {
   const [keys, setKeys] = useState([]);
   const [filteredPlanets, setFilteredPlanets] = useState('');
   const [filterByNumericValues, setFilterByNumericValues] = useState([]);
+  const [order, setOrder] = useState({ column: 'population', sort: 'ASC' });
 
   const filterPlanetsByName = (search) => {
     const newPlanetsArray = planets.filter(
@@ -60,6 +61,39 @@ function Provider({ children }) {
     }
   }, [filterByNumericValues]);
 
+  const sorter = (array, column, sort) => {
+    const sortedPlanets = [];
+    if (sort === 'ASC') {
+      sortedPlanets.push([...array.sort((a, b) => {
+        const first = a[column] === 'unknown'
+          ? Infinity : Number(a[column]);
+        const second = b[column] === 'unknown'
+          ? Infinity : Number(b[column]);
+        return first - second;
+      })]);
+    } else {
+      sortedPlanets.push([...array.sort((a, b) => {
+        const first = a[column] === 'unknown'
+          ? -Infinity : Number(a[column]);
+        const second = b[column] === 'unknown'
+          ? -Infinity : Number(b[column]);
+        return second - first;
+      })]);
+    }
+    console.log([...sortedPlanets[0]]);
+    return [...sortedPlanets[0]];
+  };
+
+  const sortPlanets = () => {
+    let sortedPlanets = [];
+    if (filterByNumericValues.length === 0) {
+      sortedPlanets = sorter(planets, order.column, order.sort);
+    } else {
+      sortedPlanets = sorter(filteredPlanets, order.column, order.sort);
+    }
+    setFilteredPlanets(sortedPlanets);
+  };
+
   return (
     <PlanetsContext.Provider
       value={ {
@@ -68,6 +102,9 @@ function Provider({ children }) {
         filterPlanetsByName,
         filterByNumericValues,
         setFilterByNumericValues,
+        order,
+        setOrder,
+        sortPlanets,
       } }
     >
       { children }
