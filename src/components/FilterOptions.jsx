@@ -38,11 +38,9 @@ function FilterOptions() {
     case 'column-sort':
       setOrder({ column: value, sort: order.sort });
       break;
-    case 'sort':
+    default:
       setOrder({ column: order.column, sort: value });
       break;
-    default:
-      return null;
     }
   };
 

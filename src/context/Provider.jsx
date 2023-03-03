@@ -30,10 +30,8 @@ function Provider({ children }) {
         return Number(planet[column]) > Number(value);
       case 'menor que':
         return Number(planet[column]) < Number(value);
-      case 'igual a':
-        return Number(planet[column]) === Number(value);
       default:
-        return null;
+        return Number(planet[column]) === Number(value);
       }
     });
     setFilteredPlanets(newPlanetsArray);
@@ -80,17 +78,11 @@ function Provider({ children }) {
         return second - first;
       })]);
     }
-    console.log([...sortedPlanets[0]]);
     return [...sortedPlanets[0]];
   };
 
   const sortPlanets = () => {
-    let sortedPlanets = [];
-    if (filterByNumericValues.length === 0) {
-      sortedPlanets = sorter(planets, order.column, order.sort);
-    } else {
-      sortedPlanets = sorter(filteredPlanets, order.column, order.sort);
-    }
+    const sortedPlanets = sorter(filteredPlanets || planets, order.column, order.sort);
     setFilteredPlanets(sortedPlanets);
   };
 
