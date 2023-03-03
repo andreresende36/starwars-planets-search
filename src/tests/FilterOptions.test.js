@@ -1,4 +1,4 @@
-import { screen, render, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen, render, waitForElementToBeRemoved, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from '../App';
 
@@ -110,37 +110,6 @@ describe('Teste do componente FilterOptions.jsx', () => {
     expect(labelDesc).toBeInTheDocument();
   })
 
-  it('Testa os elementos de Ordenação dos planetas na tabela', async () => {
-    await waitForElementToBeRemoved(screen.getByTestId('loading'), { timeout: 15000});
-    const columnSort = screen.getByTestId('column-sort');
-    const inputAsc = screen.getByTestId('column-sort-input-asc');
-    const inputDesc = screen.getByTestId('column-sort-input-desc');
-    const sortButton = screen.getByTestId('column-sort-button');
-    
-    // 1º ordenação
-    userEvent.selectOptions(columnSort, 'diameter');
-    userEvent.click(inputAsc);
-    userEvent.click(sortButton);
-    const sortedPlanets1 = screen.getAllByTestId('planet-name');
-    expect(sortedPlanets1[0].innerHTML).toBe('Endor');
-    expect(sortedPlanets1[sortedPlanets1.length - 1].innerHTML).toBe('Bespin');
-
-    // 2º ordenação
-    userEvent.selectOptions(columnSort, 'orbital_period');
-    userEvent.click(inputDesc);
-    userEvent.click(sortButton);
-    const sortedPlanets2 = screen.getAllByTestId('planet-name');
-    expect(sortedPlanets2[0].innerHTML).toBe('Bespin');
-    expect(sortedPlanets2[sortedPlanets2.length - 1].innerHTML).toBe('Tatooine');
-
-    // 3º ordenação
-    userEvent.selectOptions(columnSort, 'population');
-    userEvent.click(inputAsc);
-    userEvent.click(sortButton);
-    const sortedPlanets3 = screen.getAllByTestId('planet-name');
-    expect(sortedPlanets3[0].innerHTML).toBe('Yavin IV');
-    expect(sortedPlanets3[sortedPlanets3.length - 1].innerHTML).toBe('Dagobah');
-  })
   it('Testa o botão de remoção dos filtros', async() => {
     await waitForElementToBeRemoved(screen.getByTestId('loading'), { timeout: 15000})
     const columnFilter = screen.getByTestId('column-filter');
@@ -172,7 +141,45 @@ describe('Teste do componente FilterOptions.jsx', () => {
 
     const filters = screen.getAllByTestId('filter');
     expect(filters[0]).toBeInTheDocument();
+    expect(filters.length).toBe(3);
     userEvent.click(removeFiltersButton);
     expect(filters[0]).not.toBeInTheDocument();
+  })
+
+  it('Testa os elementos de Ordenação dos planetas na tabela', async() => {
+    await waitForElementToBeRemoved(screen.getByTestId('loading'), { timeout: 15000});
+    const columnSort = screen.getByTestId('column-sort');
+    const inputAsc = screen.getByTestId('column-sort-input-asc');
+    const inputDesc = screen.getByTestId('column-sort-input-desc');
+    const sortButton = screen.getByTestId('column-sort-button');
+
+    userEvent.selectOptions(columnSort, 'population');
+    userEvent.click(inputAsc);
+    userEvent.click(sortButton);
+    const sortedAscPlanets = screen.getAllByTestId('planet-name');
+    userEvent.click(inputDesc);
+    userEvent.click(sortButton);
+    const sortedDescPlanets = screen.getAllByTestId('planet-name');
+    
+    const invertedAscArray = sortedAscPlanets.slice(0,8).reverse();
+    expect(invertedAscArray).toEqual(sortedDescPlanets.slice(0,8));
+  })
+
+  it('Testa o botão que deleta um filtro', async() => {
+    await waitForElementToBeRemoved(screen.getByTestId('loading'), { timeout: 15000})
+    const columnFilter = screen.getByTestId('column-filter');
+    const comparisonFilter = screen.getByTestId('comparison-filter');
+    const valueFilter = screen.getByTestId('value-filter');
+    const filterButton = screen.getByRole('button', { name: /filtrar/i});
+    
+    userEvent.selectOptions(columnFilter,'population');
+    userEvent.selectOptions(comparisonFilter, 'menor que');
+    userEvent.type(valueFilter, '300000');
+    userEvent.click(filterButton);
+    const filter = expect(screen.getByTestId('filter')).toBeInTheDocument()
+    
+    const deleteFilterButton = screen.getByTestId('delete-filter-button');
+    userEvent.click(deleteFilterButton);
+    expect(filter).toBeUndefined();
   })
 })

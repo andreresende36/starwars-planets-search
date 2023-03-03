@@ -190,6 +190,7 @@ function FilterOptions() {
               className="delete-filter-button"
               onClick={ handleDeleteButton }
               value={ filter.column }
+              data-testid="delete-filter-button"
             >
               X
             </button>
